@@ -165,7 +165,23 @@ app.post('/api/emergency/alert/:id', (req, res) => {
   res.json({ message: 'Emergency contacts alerted successfully.' });
 });
 
-const PORT = process.env.PORT || 3001;
+// Serve frontend static files in production
+const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
+app.use(express.static(frontendDistPath));
+
+app.get('*', (req, res) => {
+  if (req.url.startsWith('/api')) {
+    return res.status(404).json({ error: 'API Endpoint not found' });
+  }
+  const indexPath = path.join(frontendDistPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Frontend not built. Please run "npm run build" in the frontend directory.');
+  }
+});
+
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
 });

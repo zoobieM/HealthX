@@ -17,9 +17,11 @@ export default function Emergency() {
     fetchAiInstructions();
   }, [id]);
 
+  const getBaseUrl = () => window.location.hostname === 'localhost' ? 'http://localhost:3002' : '';
+
   const fetchEmergencyData = async () => {
     try {
-      const res = await fetch(`http://localhost:3002/api/emergency/${id}`);
+      const res = await fetch(`${getBaseUrl()}/api/emergency/${id}`);
       const data = await res.json();
       if (res.ok) setProfile(data.profile);
     } catch (err) {
@@ -31,7 +33,7 @@ export default function Emergency() {
 
   const fetchAiInstructions = async () => {
     try {
-      const res = await fetch(`http://localhost:3002/api/emergency/ai/${id}`, { method: 'POST' });
+      const res = await fetch(`${getBaseUrl()}/api/emergency/ai/${id}`, { method: 'POST' });
       const data = await res.json();
       if (res.ok) setAiInstructions(data.instructions);
     } catch (err) {
@@ -45,9 +47,8 @@ export default function Emergency() {
     if (alertSent || alerting) return;
     setAlerting(true);
     try {
-      // Simulate GPS Location
       const loc = "Latitude: 37.7749, Longitude: -122.4194 (San Francisco, CA)";
-      await fetch(`http://localhost:3002/api/emergency/alert/${id}`, { 
+      await fetch(`${getBaseUrl()}/api/emergency/alert/${id}`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ location: loc })

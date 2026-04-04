@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3002/api';
+const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3002/api' : '/api';
 
 export const request = async (endpoint, options = {}) => {
   const token = localStorage.getItem('medqr_token');
